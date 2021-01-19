@@ -22,7 +22,7 @@ local learning_rate = std.parseJson(std.extVar('LEARNING_RATE'));
     "text_field_embedder" :{
         "token_embedders": {
             "tokens": {
-                "type": "pretrained_transformer_mismatched",
+                "type": "pretrained_transformer_mismatched_first_wordpiece",
                 "model_name": bert_model,
                 "train_parameters": true,
                 "last_layer_only": true,
@@ -37,16 +37,18 @@ local learning_rate = std.parseJson(std.extVar('LEARNING_RATE'));
   "data_loader": {
     "batch_sampler":{
       "type": "bucket",
-      "batch_size" : 32
+      "batch_size" : 16,
+      "sorting_keys" : ["tokens"]	
     }
 },
   "trainer": {
     "num_epochs": 10,
     "patience": 5,
     "cuda_device": 0,
+    "validation_metric": "+f1-measure-overall",
     "optimizer": {
-      "type": "adam",
-      "lr": learning_rate,
+      "type": "adamw",
+	"lr": learning_rate,
     }
   }
 }
